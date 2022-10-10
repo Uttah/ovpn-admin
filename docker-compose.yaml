@@ -1,6 +1,15 @@
 version: '3'
 
 services:
+    caddy:
+    image: caddy:2.1.1-alpine
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - ./caddy-data:/data:rw
+    restart: always
   openvpn:
     build:
       context: .
@@ -15,7 +24,7 @@ services:
       - NET_ADMIN
     ports:
       - 7777:1194 # for openvpn
-      - 8080:8080 # for ovpn-admin because of network_mode
+        #  - 8080:8080 # for ovpn-admin because of network_mode
     volumes:
       - ./easyrsa_master:/etc/openvpn/easyrsa
       - ./ccd_master:/etc/openvpn/ccd
@@ -31,7 +40,7 @@ services:
       OVPN_CCD: "true"
       OVPN_CCD_PATH: "/mnt/ccd"
       EASYRSA_PATH: "/mnt/easyrsa"
-      OVPN_SERVER: "127.0.0.1:7777:tcp"
+      OVPN_SERVER: "${external_ip}:7777:tcp"
       OVPN_INDEX_PATH: "/mnt/easyrsa/pki/index.txt"
       OVPN_AUTH: "true"
       OVPN_AUTH_DB_PATH: "/mnt/easyrsa/pki/users.db"

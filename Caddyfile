@@ -1,0 +1,8 @@
+{
+  # disable admin API
+  admin off
+}
+
+example.traceair.com {
+  reverse_proxy http://openvpn:8080
+}
